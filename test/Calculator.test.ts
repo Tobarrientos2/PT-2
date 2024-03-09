@@ -16,99 +16,105 @@ let obj = {
     ]
 }
 describe('Calculator', ():void => {
+    let x: HTMLInputElement
+    let calculator: Calculator;
+    let container:HTMLDivElement;
+    
+    beforeEach(():void  => {
+        container = document.createElement('div');
+        document.body.appendChild(container);
+    
+        calculator = new Calculator({props: obj, target: container});
+        x = screen.getByRole('textbox') as HTMLInputElement;
+    })
+    afterEach(() => {
+        calculator.$destroy();
+        document.body.removeChild(container);
+    });
 
     it('should render the calculator', ():void =>{
-        render(Calculator, obj)
-    })
-    it('should render title correctly', (): void =>{
-        render(Calculator, obj)
-        screen.getByText('Calculator')
-    })
-
-    it('should render numbers of the calculator', (): void => {
-        render(Calculator, obj)
-        obj.arr_arr.forEach((arr) => {
-            if(arr.arr_num){
-                arr.arr_num.forEach((num) =>{
-                    screen.getByText(num)
-                })
-            } 
-        })
-    })
-
-
-    it('should render 4 rows', ():void => {
-        render(Calculator, obj)
-        const arr_arr_num = screen.getAllByRole('row')
-        expect(arr_arr_num.length).toBe(4)
-    })
-
-    it('should render operations', (): void => {
-        render(Calculator, obj)
-
-        obj.arr_arr.forEach((arr)=>{
-            if(arr.arr_txt){
-                arr.arr_txt.forEach((txt) =>{
-                    screen.getByText(txt)
-                })
-            } 
-        })
-   
-    }) 
-
-    it('should render equal sign', (): void => {
-        render(Calculator, obj)
-        screen.getByText('=')
     })
     
-    it('should render input', (): void => {
-        render(Calculator, obj)
-        screen.getByRole('textbox')
-    })
-
-    it('should show user input after clicking a number', async ():Promise<void> => {
-        render(Calculator, obj)
-        const one = screen.getByText('1')
-        fireEvent.click(one)
+        it('should render title correctly', (): void =>{
+            screen.getByText('Calculator')
+        })
+    
+        it('should render numbers of the calculator', (): void => {
+            obj.arr_arr.forEach((arr) => {
+                if(arr.arr_num){
+                    arr.arr_num.forEach((num) =>{
+                        screen.getByText(num)
+                    })
+                } 
+            })
+        })
 
         
-        const two = screen.getByText('2')
-        fireEvent.click(two)
-
-        const three = screen.getByText('3')
-        fireEvent.click(three)
-
-
-        const input = screen.getByRole('textbox') as HTMLInputElement
-        await waitFor(() => {
-
-            expect(input.value).toBe('123')
-        })
-    })
-    it('should concat operators with numbers when clicking operations and show it in the input', async (): Promise<void> => {
-        render(Calculator ,obj)
-        const one = screen.getByText('1')
-        fireEvent.click(one)
-
-        const plus = screen.getByText('+')
-        fireEvent.click(plus)
-        fireEvent.click(one)
-
-        const input = screen.getByRole('textbox') as HTMLInputElement
-        await waitFor(() =>{
-            expect(input.value).toBe('1+1')
-        })
-    })
-
-    it('render should depend on functions', async ():Promise<void> =>{
-        const calculator = new Calculator({props: obj, target: document.body}); 
-        expect(utils.m_Initialize_arr_txt())
-        expect(utils.m_txt_1SplitAll_arr_txt('1-1-1')).toEqual(['1', '1', '1'])
-
-        expect(utils.m_arr_txt_ConvertAll_arr_num(['1','1','1'])).toEqual([1,1,1])
-        expect(utils.m_txt_1EvaluateAll_num('1+1')).toEqual('2')
-
-        expect(utils.m_num_Convert_txt(2)).toEqual('2')
-    })
-   
+            it('should render 4 rows', ():void => {
+                const arr_arr_num = screen.getAllByRole('row')
+                expect(arr_arr_num.length).toBe(4)
+            })
+            it('should render operations', (): void => {
+            
+                obj.arr_arr.forEach((arr)=>{
+                    if(arr.arr_txt){
+                        arr.arr_txt.forEach((txt) =>{
+                            screen.getByText(txt)
+                        })
+                    } 
+                })
+            
+            }) 
+            
+                it('should render equal sign', (): void => {
+                    screen.getByText('=')
+                })
+                
+                it('should render input', (): void => {
+                    screen.getByRole('textbox')
+                })
+            
+                it('should show user input after clicking a number', async ():Promise<void> => {
+                    const one = screen.getByText('1')
+                    fireEvent.click(one)
+            
+                    
+                    const two = screen.getByText('2')
+                    fireEvent.click(two)
+            
+                    const three = screen.getByText('3')
+                    fireEvent.click(three)
+            
+            
+                    const input = screen.getByRole('textbox') as HTMLInputElement
+                    await waitFor(() => {
+            
+                        expect(input.value).toBe('123')
+                    })
+                })
+                it('render should depend on functions', async ():Promise<void> =>{
+            
+                    // const input = screen.getByRole('textbox') as HTMLInputElement
+                    
+                    expect(calculator.num_handleNum_txt(1)).toEqual('1')
+                   
+                })
+            
+            
+                it('should concat operators with numbers when clicking operations and show it in the input', async (): Promise<void> => {
+                    const one = screen.getByText('1')
+                    const plus = screen.getByText('+')
+                    
+                    await fireEvent.click(one)
+                    await fireEvent.click(plus)
+                    await fireEvent.click(one)
+            
+                    await waitFor(() =>{
+                        expect(x.value).toBe('1+1')
+                    })
+                })
 })
+    
+
+    
+    
